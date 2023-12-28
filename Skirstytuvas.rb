@@ -18,12 +18,14 @@ def skirstytuvas(darbininkas_ractors,kaupiklis_ractor)
     when :result
     when :log
     when :processed
-      proc = message[:proc]
+      proc = message[:processed]
       kaupiklis_ractor.send({type: :result, result: proc})
     when :done
       # Siunčią pabaigos žinutę darbininkams
       darbininkas_ractors.each do |ractor|
         ractor.send({type: :done})
+        # Siunčią pabaigos žinutę kaupikliui
+        # kaupiklis_ractor.send({type: :done})
       end
     end
   end

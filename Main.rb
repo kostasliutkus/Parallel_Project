@@ -31,8 +31,8 @@ main_ractor = Ractor.new do
   end
 
   # Skirstytuvo aktoriaus sukūrimas
-  skirstytuvas_ractor = Ractor.new(darbininkas_ractors) do |arg1|
-    skirstytuvas(arg1)
+  skirstytuvas_ractor = Ractor.new(darbininkas_ractors,kaupiklis_ractor) do |arg1,arg2|
+    skirstytuvas(arg1,arg2)
   end
 
   # Siunčiami po vieną darbuotoją į skirstytuvą

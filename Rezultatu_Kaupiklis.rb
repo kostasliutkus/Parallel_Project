@@ -2,10 +2,15 @@ def kaupiklis
   loop do
     # Priemą žinutę iš skirstytuvo
     message = Ractor.receive
-    break if message == :done
-    puts "kaupiklis received:"
-    puts "Name: #{message.name}"
-    puts "Hours: #{message.hours}"
-    puts "Hourly: #{message.hourly}"
+    case message[:type]
+    when :done
+      break
+    when :result
+      data = message[:result]
+      puts "kaupiklis received:"
+      puts "Name: #{data.name}"
+      puts "Hours: #{data.hours}"
+      puts "Hourly: #{data.hourly}"
+    end
   end
 end
