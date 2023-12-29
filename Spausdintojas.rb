@@ -1,7 +1,6 @@
 def print_darbuotojai(file_path)
   skirstytuvas_ractor = Ractor.receive
   message = Ractor.receive
-  puts "Spausdintojas gavo #{message}"
   darbuotojai=message
   File.open(file_path,'w') do |file|
     if darbuotojai.length < 1

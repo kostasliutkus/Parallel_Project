@@ -4,24 +4,24 @@ require_relative 'Skirstytuvas'
 require_relative 'Rezultatu_Kaupiklis'
 require_relative 'Darbininkas'
 require_relative 'Stopwatch'
+require_relative 'Zurnalas'
+# su 6 darbininkais 1.857 sekundės
+# su 1 darbininku 10.22 sekundės
 main_ractor = Ractor.new do
-
+  #laikmatis
   stopwatch = Stopwatch.new
-
-  # Start the stopwatch
   stopwatch.start
-
 
   # Kelias iki duomenų failo
   # file_path = 'data/IF-11_LiutkusK_L1_dat_2.json'
   # file_path = 'data/IF-11_LiutkusK_L1_dat_3.json'
   file_path = 'data/IF-11_LiutkusK_L1_dat_1.json'
 
-  # Kelias iki rezultatų failo
-  result_file_path = 'rez.txt'
-
   # skaitymas duomenų
   darbuotojai = read_darbuotojai(file_path)
+
+  # Žurnalo aktoriaus paleidiams
+  zurnalas_ractor =Ractor.new{zurnalas('Zurnalas.txt')}
 
   # Rezultatų Kaupiklio aktoriaus sukūrimas
   kaupiklis_ractor = Ractor.new{kaupiklis}
@@ -37,8 +37,8 @@ main_ractor = Ractor.new do
     end
   end
   # Skirstytuvo aktoriaus sukūrimas
-  skirstytuvas_ractor = Ractor.new(darbininkas_ractors,kaupiklis_ractor,darbuotojai.length,spausdintojas_ractor) do |arg1,arg2,arg3,arg4|
-    skirstytuvas(arg1,arg2,arg3,arg4)
+  skirstytuvas_ractor = Ractor.new(darbininkas_ractors,kaupiklis_ractor,darbuotojai.length,spausdintojas_ractor,zurnalas_ractor) do |dr,kr,dc,sr,zr|
+    skirstytuvas(dr,kr,dc,sr,zr)
   end
 
   # Siunčiami po vieną darbuotoją į skirstytuvą
@@ -54,8 +54,8 @@ main_ractor = Ractor.new do
   # Laukiama kol pabaigs darbą likę aktoriai
   kaupiklis_ractor.take
   skirstytuvas_ractor.take
-
-  # print_darbuotojai(darbuotojai,result_file_path)
+  zurnalas_ractor.take
+  #laikmačio stabdymas
   stopwatch.stop
 end
 # Laukiama main aktoriaus pabaigos

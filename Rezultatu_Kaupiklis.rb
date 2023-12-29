@@ -18,18 +18,15 @@ def kaupiklis
     case message[:type]
     when :result
       data = message[:result]
-      puts "kaupiklis received:"
-      puts "Name: #{data.name}"
-      puts "Hours: #{data.hours}"
-      puts "Hourly: #{data.hourly}"
       add_and_sort(results,data)
       count+=1
     when :request
-      puts "skirstytuvas prašo rezultatų"
+      # Skirstytuvo rezultatų prašymo žinutė gauta, siunčiami rezultatai
       skirstytuvas_ractor.send({type: :results, results: results})
+
       puts "turim #{results.length} duomenų"
       puts "gavom #{count} duomenų"
-      return results
+      return
     end
 
   end
