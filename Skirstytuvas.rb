@@ -2,7 +2,7 @@ def skirstytuvas(darbininkas_ractors,kaupiklis_ractor,data_count,spausdintojas_r
   #indeksas paskirstymui
   index=0
   # skaičiavimas pabaigai
-  end_count=0
+  sent_to_worker=0
   # Pradinis nusiuntimas skirstytuvo nuorodos visiem aktualiems aktoriams
   darbininkas_ractors.each { |ractor| ractor.send(Ractor.current) }
   kaupiklis_ractor.send(Ractor.current)
@@ -10,19 +10,6 @@ def skirstytuvas(darbininkas_ractors,kaupiklis_ractor,data_count,spausdintojas_r
 
   loop do
     message = Ractor.receive
-    ## ČIA GAUNAM 39 DUOM
-    if end_count == data_count-1
-      index=0
-      # Siunčią pabaigos žinutę darbininkams
-      darbininkas_ractors.each do |ractor|
-        ractor.send({type: :done})
-
-        # veiksmas įrašomas žurnale
-        log = "Skirstytuvas -> Darbininkas #{index+1} | Pabaigos pranešimas"
-        zurnalas_ractor.send({type: :log, log: log})
-        index+=1
-      end
-    end
 
     case message[:type]
       when :data
@@ -42,11 +29,20 @@ def skirstytuvas(darbininkas_ractors,kaupiklis_ractor,data_count,spausdintojas_r
         # veiksmas įrašomas žurnale
         log = "Skirstytuvas -> Darbininkas #{index+1} | #{data}"
         zurnalas_ractor.send({type: :log, log: log})
-
         index+=1
-        end_count+=1
-
-      when :results
+        sent_to_worker+=1
+        if sent_to_worker == data_count
+          index=0
+          # Siunčią pabaigos žinutę darbininkams
+          darbininkas_ractors.each do |ractor|
+            ractor.send({type: :done})
+            # veiksmas įrašomas žurnale
+            log = "Skirstytuvas -> Darbininkas #{index+1} | Pabaigos pranešimas"
+            zurnalas_ractor.send({type: :log, log: log})
+            index+=1
+          end
+        end
+    when :results
         # duomenys gauti iš rezultatų kaupiklio
         data=message[:results]
 
@@ -69,7 +65,6 @@ def skirstytuvas(darbininkas_ractors,kaupiklis_ractor,data_count,spausdintojas_r
       when :processed
         # Žinutė
         proc = message[:processed]
-
         # darbininko numeris
         worker_number = message[:sender]
 
@@ -94,7 +89,6 @@ def skirstytuvas(darbininkas_ractors,kaupiklis_ractor,data_count,spausdintojas_r
 
         log = "Skirstytuvas -> Rezultatų kaupiklis | Rikiuotu duomenų prašymas #{data} "
         zurnalas_ractor.send({type: :log, log: log})
-
     end
   end
 end

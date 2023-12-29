@@ -14,8 +14,8 @@ main_ractor = Ractor.new do
 
   # Kelias iki duomenų failo
   # file_path = 'data/IF-11_LiutkusK_L1_dat_2.json'
-  # file_path = 'data/IF-11_LiutkusK_L1_dat_3.json'
-  file_path = 'data/IF-11_LiutkusK_L1_dat_1.json'
+   file_path = 'data/IF-11_LiutkusK_L1_dat_3.json'
+  #file_path = 'data/IF-11_LiutkusK_L1_dat_1.json'
 
   # skaitymas duomenų
   darbuotojai = read_darbuotojai(file_path)
@@ -25,15 +25,17 @@ main_ractor = Ractor.new do
 
   # Rezultatų Kaupiklio aktoriaus sukūrimas
   kaupiklis_ractor = Ractor.new{kaupiklis}
+
   # Spausdintojo aktoriaus sukūrimas
   spausdintojas_ractor = Ractor.new{print_darbuotojai('rez.txt')}
+
   # Darbininkų aktorių kiekis
   worker_count = 6
 
   # Darbininkų aktorių kūrimas ir paleidimas
   darbininkas_ractors = (1..worker_count).map do |number|
-    Ractor.new(number) do | n|
-      darbininkas(n)
+    Ractor.new(number) do | num|
+      darbininkas(num)
     end
   end
   # Skirstytuvo aktoriaus sukūrimas

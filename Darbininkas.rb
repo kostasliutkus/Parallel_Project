@@ -18,6 +18,8 @@ def darbininkas(number)
       # jei tenkina kriterijus siunčiama, kaip processed
       if check_criteria(data.hours, data.hourly)
         skirstytuvas_ractor.send({ type: :processed, processed: data ,sender: number})
+      else
+        skirstytuvas_ractor.send({type: :empty})
       end
     when :done
       # Darbininkas gavo pabaigos pranešimą
