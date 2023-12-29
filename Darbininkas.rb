@@ -12,6 +12,7 @@ def darbininkas(number)
   loop do
     # Priemą žinutę iš skirstytuvo
     message = Ractor.receive
+    puts "Message darb - #{message[:type]}"
     case message[:type]
     when :data
       data = message[:data]
@@ -21,6 +22,7 @@ def darbininkas(number)
         skirstytuvas_ractor.send({ type: :processed, processed: data })
       end
     when :done
+      puts "Darbininkas #{number} gavo done"
       return
     end
   end

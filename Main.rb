@@ -39,7 +39,7 @@ main_ractor = Ractor.new do
   darbuotojai.each { |message| skirstytuvas_ractor.send({type: :data, data: message}) }
 
   # Pabaigos žinutė, jog darbą galima baigti siunčiama skirstytuvui
-  skirstytuvas_ractor.send({type: :done})
+  # skirstytuvas_ractor.send({type: :done})
 
   # Laukiama kol pabaigs darbą aktoriai
 
