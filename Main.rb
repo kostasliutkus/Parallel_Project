@@ -13,9 +13,9 @@ main_ractor = Ractor.new do
   stopwatch.start
 
   # Kelias iki duomenų failo
-  # file_path = 'data/IF-11_LiutkusK_L1_dat_2.json'
-   file_path = 'data/IF-11_LiutkusK_L1_dat_3.json'
-  #file_path = 'data/IF-11_LiutkusK_L1_dat_1.json'
+  # file_path = 'data/IF-11_LiutkusK_EGZ_dat_2.json'
+  #file_path = 'data/IF-11_LiutkusK_EGZ_dat_3.json'
+  file_path = 'data/IF-11_LiutkusK_EGZ_dat_1.json'
 
   # skaitymas duomenų
   darbuotojai = read_darbuotojai(file_path)
