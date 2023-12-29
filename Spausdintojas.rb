@@ -1,4 +1,8 @@
-def print_darbuotojai(darbuotojai,file_path)
+def print_darbuotojai(file_path)
+  skirstytuvas_ractor = Ractor.receive
+  message = Ractor.receive
+  puts "Spausdintojas gavo #{message}"
+  darbuotojai=message
   File.open(file_path,'w') do |file|
     if darbuotojai.length < 1
       file.puts "Nėra darbuotojų tenkinančių sąlygą"
@@ -16,5 +20,6 @@ def print_darbuotojai(darbuotojai,file_path)
       index+=1
     end
   end
+  skirstytuvas_ractor.send({type: :results_printed})
 end
 

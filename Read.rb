@@ -1,5 +1,5 @@
 require 'json'
-require_relative 'darbuotojas'
+require_relative 'Darbuotojas'
 def read_darbuotojai(file_path)
   # Sukūriamas masyvas duomenų saugojimui
   darbuotojai = []

@@ -8,7 +8,10 @@ def add_and_sort(results, item)
 end
 
 def kaupiklis
+  #gaunama nuoroda į skirstytuvą
+  skirstytuvas_ractor = Ractor.receive
   results=[]
+  count=0
   loop do
     # Priemą žinutę iš skirstytuvo
     message = Ractor.receive
@@ -20,9 +23,12 @@ def kaupiklis
       puts "Hours: #{data.hours}"
       puts "Hourly: #{data.hourly}"
       add_and_sort(results,data)
-      # print_darbuotojai(results,'testrez.txt')
-    when :done
-      puts "Received Done Kaupiklis"
+      count+=1
+    when :request
+      puts "skirstytuvas prašo rezultatų"
+      skirstytuvas_ractor.send({type: :results, results: results})
+      puts "turim #{results.length} duomenų"
+      puts "gavom #{count} duomenų"
       return results
     end
 
