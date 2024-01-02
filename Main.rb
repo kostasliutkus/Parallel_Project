@@ -5,9 +5,12 @@ require_relative 'Rezultatu_Kaupiklis'
 require_relative 'Darbininkas'
 require_relative 'Stopwatch'
 require_relative 'Zurnalas'
-# su 6 darbininkais 1.857 sekundės
-# su 1 darbininku 10.22 sekundės
-main_ractor = Ractor.new do
+# su 6 darbininkais 1.857 sekundės naudojant sleep
+# su 1 darbininku 10.22 sekundės naudojant sleep
+
+# su 1 darbininku 10.23 sekundės
+# su 6 darbininkais 12.68 sekundės
+# main_ractor = Ractor.new do
   #laikmatis
   stopwatch = Stopwatch.new
   stopwatch.start
@@ -51,10 +54,10 @@ main_ractor = Ractor.new do
   end
   
   # Siunčiami po vieną darbuotoją į skirstytuvą
-  # darbuotojai.each { |message| skirstytuvas_ractor.send({type: :data, data: message}) }
-  darbuotojai.each_with_index do |message, index|
-    send_data(message, skirstytuvas_ractor)
-  end
+  darbuotojai.each { |message| skirstytuvas_ractor.send({type: :data, data: message}) }
+  # darbuotojai.each_with_index do |message, index|
+  #   send_data(message, skirstytuvas_ractor)
+  # end
 
   # Laukiama kol pabaigs darbą darbininkai
   darbininkas_ractors.each(&:take)
@@ -70,6 +73,6 @@ main_ractor = Ractor.new do
   #laikmačio stabdymas
   stopwatch.stop
   
-end
-# Laukiama main aktoriaus pabaigos
-main_ractor.take
+# end
+# # Laukiama main aktoriaus pabaigos
+# main_ractor.take
