@@ -7,8 +7,7 @@ def skirstytuvas(darbininkas_ractors,kaupiklis_ractor,data_count,spausdintojas_r
   darbininkas_ractors.each { |ractor| ractor.send(Ractor.current) }
   kaupiklis_ractor.send(Ractor.current)
   spausdintojas_ractor.send(Ractor.current)
-  # Duomenų buferis
-  data_queue = Queue.new
+
   loop do
     message = Ractor.receive
     case message[:type]

@@ -34,7 +34,7 @@ require_relative 'Zurnalas'
   spausdintojas_ractor = Ractor.new{print_darbuotojai('rez.txt')}
 
   # Darbininkų aktorių kiekis
-  worker_count = 1
+  worker_count = 6
 
   # Darbininkų aktorių kūrimas ir paleidimas
   darbininkas_ractors = (1..worker_count).map do |number|
