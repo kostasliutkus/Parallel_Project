@@ -1,25 +1,14 @@
 require_relative 'Spausdintojas'
 require_relative 'Darbuotojas'
-def generate_random(batch_size)
-  max_integer = 2**62 - 1
-  integer_range = 1..max_integer
-  batch_size.times do
-    rand(integer_range)
+def cpu_intense_function(name)
+  hashed = name.hash
+  5000000.times do
+    hashed=hashed.hash
   end
 end
-
-def cpu_intense_function
-
-  batch_size = 25000
-
-  (500000 /25000).times do
-    generate_random(batch_size)
-  end
-end
-
-# tikrinimas kriterijaus
-def check_criteria(hours,hourly)
-  cpu_intense_function
+# tikrinimas
+def check_criteria(hours,hourly,name)
+  cpu_intense_function(name)
   hourly * 4 * hours > 400
 end
 
@@ -41,7 +30,7 @@ end
 def received_data(message,skirstytuvas_ractor,number)
   data = message[:data]
   # jei tenkina kriterijus siunčiama, kaip processed
-  if check_criteria(data.hours, data.hourly)
+  if check_criteria(data.hours, data.hourly,data.name)
     #skirstytuvas_ractor.send({ type: :processed, processed: data ,sender: number})
     send_to_skirstytuvas_match(skirstytuvas_ractor,data,number)
   else

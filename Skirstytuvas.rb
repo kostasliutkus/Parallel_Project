@@ -93,7 +93,7 @@ def send_done_signals_to_workers(darbininkas_ractors, zurnalas_ractor)
 end
 
 def log_last_action(zurnalas_ractor,log)
-  zurnalas_ractor.send({type: :last_log, log: log})
+  zurnalas_ractor.send({type: :last_log, last_log: log})
 end
 def log_action(zurnalas_ractor,log)
   zurnalas_ractor.send({type: :log, log: log})

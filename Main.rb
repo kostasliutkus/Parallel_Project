@@ -5,20 +5,18 @@ require_relative 'Rezultatu_Kaupiklis'
 require_relative 'Darbininkas'
 require_relative 'Stopwatch'
 require_relative 'Zurnalas'
-# su 6 darbininkais 1.857 sekundės naudojant sleep
-# su 1 darbininku 10.22 sekundės naudojant sleep
-
-# su 1 darbininku 10.23 sekundės
-# su 6 darbininkais 12.68 sekundės
-# main_ractor = Ractor.new do
+# vidurkis iš 5 skritingų kartų
+# su 1 darbininku 11.84756294 sekundės
+# su 6 darbininkais 4.04770782 sekundės
+main_ractor = Ractor.new do
   #laikmatis
   stopwatch = Stopwatch.new
   stopwatch.start
 
 
   # Kelias iki duomenų failo
-  # file_path = 'data/IF-11_LiutkusK_EGZ_dat_2.json'
-  #file_path = 'data/IF-11_LiutkusK_EGZ_dat_3.json'
+  #file_path = 'data/IF-11_LiutkusK_EGZ_dat_2.json'
+  # file_path = 'data/IF-11_LiutkusK_EGZ_dat_3.json'
   file_path = 'data/IF-11_LiutkusK_EGZ_dat_1.json'
 
   # skaitymas duomenų
@@ -34,7 +32,7 @@ require_relative 'Zurnalas'
   spausdintojas_ractor = Ractor.new{print_darbuotojai('rez.txt')}
 
   # Darbininkų aktorių kiekis
-  worker_count = 6
+  worker_count = 1
 
   # Darbininkų aktorių kūrimas ir paleidimas
   darbininkas_ractors = (1..worker_count).map do |number|
@@ -73,6 +71,6 @@ require_relative 'Zurnalas'
   #laikmačio stabdymas
   stopwatch.stop
   
-# end
-# # Laukiama main aktoriaus pabaigos
-# main_ractor.take
+end
+ # Laukiama main aktoriaus pabaigos
+main_ractor.take
