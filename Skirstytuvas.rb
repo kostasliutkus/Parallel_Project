@@ -12,7 +12,23 @@ def skirstytuvas(darbininkas_ractors,kaupiklis_ractor,data_count,spausdintojas_r
     message = Ractor.receive
     case message[:type]
       when :data
-        index,sent_to_worker = handle_worker_data(message,darbininkas_ractors,zurnalas_ractor,index,sent_to_worker,data_count)
+        data = message[:data]
+        # veiksmas įrašomas žurnale
+        log_action(zurnalas_ractor,"Skirstytuvas <- Main | #{data}")
+
+        # Siunčia duomenis darbininkams
+        darbininkas_ractors[index].send({type: :data, data: data})
+
+        # veiksmas įrašomas žurnale
+        log_action(zurnalas_ractor,"Skirstytuvas -> Darbininkas #{index+1} | #{data}")
+
+        # kol indeksas mažesnis už darbininkų kiekį indeksas didinamas, kai tampa lygus nustatomas į nulį
+        index = (index + 1) % darbininkas_ractors.length
+        sent_to_worker+=1
+
+        if sent_to_worker == data_count
+          send_done_signals_to_workers(darbininkas_ractors,zurnalas_ractor)
+        end
     when :results
         # duomenys gauti iš rezultatų kaupiklio
         data=message[:results]
@@ -56,26 +72,6 @@ def skirstytuvas(darbininkas_ractors,kaupiklis_ractor,data_count,spausdintojas_r
         log_action(zurnalas_ractor,"Skirstytuvas -> Rezultatų kaupiklis | Rikiuotu duomenų prašymas #{data} ")
     end
   end
-end
-def handle_worker_data(message,darbininkas_ractors,zurnalas_ractor,index,sent_to_worker,data_count)
-  data = message[:data]
-  # veiksmas įrašomas žurnale
-  log_action(zurnalas_ractor,"Skirstytuvas <- Main | #{data}")
-
-  # Siunčia duomenis darbininkams
-  darbininkas_ractors[index].send({type: :data, data: data})
-
-  # veiksmas įrašomas žurnale
-  log_action(zurnalas_ractor,"Skirstytuvas -> Darbininkas #{index+1} | #{data}")
-
-  # kol indeksas mažesnis už darbininkų kiekį indeksas didinamas, kai tampa lygus nustatomas į nulį
-  index = (index + 1) % darbininkas_ractors.length
-  sent_to_worker+=1
-
-  if sent_to_worker == data_count
-    send_done_signals_to_workers(darbininkas_ractors,zurnalas_ractor)
-  end
-  [index, sent_to_worker]
 end
 def send_done_signals_to_workers(darbininkas_ractors, zurnalas_ractor)
   worker_index=0
