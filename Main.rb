@@ -12,6 +12,7 @@ main_ractor = Ractor.new do
   stopwatch = Stopwatch.new
   stopwatch.start
 
+
   # Kelias iki duomenų failo
   # file_path = 'data/IF-11_LiutkusK_EGZ_dat_2.json'
   #file_path = 'data/IF-11_LiutkusK_EGZ_dat_3.json'
@@ -30,7 +31,7 @@ main_ractor = Ractor.new do
   spausdintojas_ractor = Ractor.new{print_darbuotojai('rez.txt')}
 
   # Darbininkų aktorių kiekis
-  worker_count = 6
+  worker_count = 1
 
   # Darbininkų aktorių kūrimas ir paleidimas
   darbininkas_ractors = (1..worker_count).map do |number|
@@ -38,14 +39,22 @@ main_ractor = Ractor.new do
       darbininkas(num)
     end
   end
+  
   # Skirstytuvo aktoriaus sukūrimas
   skirstytuvas_ractor = Ractor.new(darbininkas_ractors,kaupiklis_ractor,darbuotojai.length,spausdintojas_ractor,zurnalas_ractor) do |dr,kr,dc,sr,zr|
     skirstytuvas(dr,kr,dc,sr,zr)
   end
 
+  def send_data(data,skirstytuvas_ractor)
+    # Send the data to the distributor via Ractor message
+    skirstytuvas_ractor.send({ type: :data, data: data })
+  end
+  
   # Siunčiami po vieną darbuotoją į skirstytuvą
-  darbuotojai.each { |message| skirstytuvas_ractor.send({type: :data, data: message}) }
-
+  # darbuotojai.each { |message| skirstytuvas_ractor.send({type: :data, data: message}) }
+  darbuotojai.each_with_index do |message, index|
+    send_data(message, skirstytuvas_ractor)
+  end
 
   # Laukiama kol pabaigs darbą darbininkai
   darbininkas_ractors.each(&:take)
@@ -57,8 +66,10 @@ main_ractor = Ractor.new do
   kaupiklis_ractor.take
   skirstytuvas_ractor.take
   zurnalas_ractor.take
+
   #laikmačio stabdymas
   stopwatch.stop
+  
 end
 # Laukiama main aktoriaus pabaigos
 main_ractor.take
